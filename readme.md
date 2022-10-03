@@ -1,0 +1,9 @@
+First and foremost I am concerned about user account security with md5 anywhere near user passwords. Recommend change is to use best practice password security by salting and hashing with a strong encryption algorithm. Input sanitization is a concern but may be happening in a different part of the program.
+
+For the updateUsers and storeUsers functions I might suspect that the intended or more eloquent implementation does not immediately return on a single failure but rather updates or stores good and working users as appropriate and if there are errors, aggregate them for our return value. Additionally our failure case for the conditional should notify us if it happens. 
+
+strlen() >= 10 is not a reasonable length. "Bob Jones" is nine characters. How to fix this depends on business requirements. The most generous solution would be regex for one or more non-whitespace characters.
+
+In regards to sendEmail, its usage in storeUsers is insufficient. At current, emails will only be sent if all users are created successfully. The intended implementation might look something like queuing an email whenever a user is successfully stored. Or to make the current implementation more functional we might aggregate our errors as in the second comment and send email only on the successful attempts.
+
+Furthermore, sendEmail doesn't fit with the control flow of the rest of the program. There is no way of knowing if sendEmail silently fails for whatever reason. I would want a try catch block as in the first two functions so that we might be notified on a failure. This would additionally want us to decouple sendEmail from storeUsers, making it public, but allowing us to find that all users are created successfully but not all emails were sent successfully.
